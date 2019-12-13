@@ -4,19 +4,20 @@
             <v-btn icon :id="`btn_${val2}`" @click="openModal">
             {{val1.getDate()}}
             </v-btn>
-            <my-modal @close="closeModal" v-if="modal"></my-modal>
+            <my-modal @close="closeModal" v-if="modal" :val=val1></my-modal>
         </div>
     </div>
 </template>
 <script >
 import myModal from '~/components/myModal.vue'
+import {mapState} from 'vuex'
 export default {
     data(){
         return{
             today: new Date(),
-            modal: false,
         }
     },
+    computed: mapState(["modal"]),
     props:{
         val1: Date,
         val2: Number
@@ -36,7 +37,7 @@ export default {
         if(this.val1.getMonth()<this.today.getMonth()&&this.val1<this.today){
             box.style.backgroundColor="rgba(40,40,40,0.3)"
         }else if(this.val1 < this.today && this.val1.getDate() != this.today.getDate()){
-            box.style.backgroundColor="grey"
+            box.style.backgroundColor="rgba(10,10,10,0.3)"
         }
         if (this.val1.getMonth()!=this.today.getMonth()){
             btn.style.opacity=0.4
@@ -44,10 +45,10 @@ export default {
     },
     methods:{
         openModal(){
-            this.modal = true
+            this.$store.dispatch('changeModalState')
         },
         closeModal(){
-            this.modal= false
+            this.$store.dispatch('changeModalState')
         }
     },
     components:{

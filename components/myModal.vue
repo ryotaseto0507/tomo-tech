@@ -1,25 +1,26 @@
 <template>
-    <transition name="modal" appear>
-        <div class="modal modal-overlay" @click.self="$emit('close')">
-            <div class="modal-window">
-                <v-btn icon ripple @click="$emit('close')" class="modal-close">
+    <transition name="modal2" appear>
+        <div class="modal2 modal-overlay" @click.self="$emit('close')">
+            <div class="modal2-window">
+                <v-btn icon ripple @click="$emit('close')" >
                     <v-icon>mdi-close-circle-outline</v-icon>
                 </v-btn>
-                <v-textarea></v-textarea>
+                <v-textarea solo label="Details of your event" v-model="eventExplanation"></v-textarea>
                 <v-icon>mdi-calendar-outline</v-icon>
-                <select v-model="selected">
-                    <option v-for="currentNumber in 10" :value="currentNumber">
-                        {{currentNumber}}
-                     </option>
+                <select v-model="currentNumber">
+                    <option v-for="i in 10" >
+                        {{i}}
+                    </option>
                 </select>
                 <span>/</span>
-                <select v-model="selected">
-                    <option v-for="maxNumber in 10" :value="maxNumber">
-                        {{maxNumber}}
-                     </option>
+                <select v-model="maxNumber">
+                    <option v-for="i in 10">
+                        {{i}}
+                    </option>
                 </select>
                 <v-icon>mdi-tag-plus-outline</v-icon>
                 <v-icon>mdi-map-marker-plus</v-icon>
+                <v-btn @click="createEvent(val,eventExplanation,currentNumber,maxNumber)">Create</v-btn>
             </div>
         </div>
     </transition>
@@ -28,13 +29,25 @@
 export default {
     data(){
         return{
-            currentNumber: 0
+            currentNumber: 1,
+            maxNumber: 1,
+            eventExplanation: ""
         }
+    },
+    props:{
+        val: Date
+    },
+    methods:{
+        createEvent(date,exp,num1,num2){
+            this.$store.dispatch('addNewEvent',{id:this.$store.getters.max,Date:date,eventExplanation:exp,currentNumber:num1,maxNumber:num2})
+        }
+
     }
+
 }
 </script>
 <style lang="stylus" scoped>
-.modal {
+.modal2 {
     &.modal-overlay {
         display: flex;
         align-items: center;
@@ -45,12 +58,11 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5)
+        background: rgba(0,0,0,0.03);
     }
     &-window{
         background:#fff;
         border-radius: 4px;
-        overflow: hidden
     }
 }
 .modal-enter-active, .modal-leave-active {
