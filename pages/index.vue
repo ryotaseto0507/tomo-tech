@@ -1,12 +1,12 @@
 <template>
     <div>
         <div class="container">
-        <div class="showDays" id="calendar">
-            <div v-for="(count, index) in numberOfDays" :key="count" class="days">
-                <date-box class="oneDay" :val1=day(index) :val2=index />
+            <div class="showDays" id="calendar">
+                <div v-for="(count, index) in numberOfDays" :key="count" class="days">
+                    <date-box class="oneDay" :val1=day(index) :val2=index />
+                </div>
             </div>
-        </div>
-        <div class="backStr">{{month}}</div>
+            <div class="backStr">{{month}}</div>
         </div>
     </div>
 </template>

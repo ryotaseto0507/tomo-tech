@@ -1,17 +1,20 @@
 <template>
     <div>
         <div :id="`box_${val2}`" class="dateBox">
-            <v-btn icon :id="`btn_${val2}`">
+            <v-btn icon :id="`btn_${val2}`" @click="openModal">
             {{val1.getDate()}}
             </v-btn>
+            <my-modal @close="closeModal" v-if="modal"></my-modal>
         </div>
     </div>
 </template>
 <script >
+import myModal from '~/components/myModal.vue'
 export default {
     data(){
         return{
-            today: new Date()
+            today: new Date(),
+            modal: false,
         }
     },
     props:{
@@ -40,6 +43,15 @@ export default {
         }
     },
     methods:{
+        openModal(){
+            this.modal = true
+        },
+        closeModal(){
+            this.modal= false
+        }
+    },
+    components:{
+        myModal
     }
 }
 </script>
