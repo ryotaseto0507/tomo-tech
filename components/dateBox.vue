@@ -4,7 +4,11 @@
             <v-btn icon :id="`btn_${val2}`" @click="openModal">
             {{val1.getDate()}}
             </v-btn>
-            <my-modal @close="closeModal" v-if="modal" :val=val1></my-modal>
+            <my-modal @close="closeModal" v-if="modal" :val=val1>
+                <template slot="button">
+                    <button @click="closeModal">Create</button>
+                </template>
+            </my-modal>
         </div>
     </div>
 </template>
@@ -15,6 +19,7 @@ export default {
     data(){
         return{
             today: new Date(),
+            modal: false
         }
     },
     computed: mapState(["modal"]),
@@ -45,10 +50,10 @@ export default {
     },
     methods:{
         openModal(){
-            this.$store.dispatch('changeModalState')
+            this.modal = true
         },
         closeModal(){
-            this.$store.dispatch('changeModalState')
+            this.modal = false
         }
     },
     components:{

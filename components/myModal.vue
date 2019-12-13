@@ -1,7 +1,7 @@
 <template>
-    <transition name="modal2" appear>
-        <div class="modal2 modal-overlay" @click.self="$emit('close')">
-            <div class="modal2-window">
+    <transition name="modal" appear>
+        <div class="modal modal-overlay" @click.self="$emit('close')">
+            <div class="modal-window">
                 <v-btn icon ripple @click="$emit('close')" >
                     <v-icon>mdi-close-circle-outline</v-icon>
                 </v-btn>
@@ -20,7 +20,9 @@
                 </select>
                 <v-icon>mdi-tag-plus-outline</v-icon>
                 <v-icon>mdi-map-marker-plus</v-icon>
-                <v-btn @click="createEvent(val,eventExplanation,currentNumber,maxNumber)">Create</v-btn>
+                <slot name="button">
+                    <v-btn @click="createEvent(val,eventExplanation,currentNumber,maxNumber)">Create</v-btn>
+                </slot>
             </div>
         </div>
     </transition>
@@ -47,7 +49,7 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.modal2 {
+.modal {
     &.modal-overlay {
         display: flex;
         align-items: center;
@@ -58,7 +60,7 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.03);
+        background: rgba(0,0,0,0.3);
     }
     &-window{
         background:#fff;
