@@ -3,7 +3,7 @@
         <div class="modal modal-overlay" @click.self="$emit('close')">
             <div class="modal-window">
                 <v-btn icon ripple @click="$emit('close')" >
-                    <v-icon>mdi-close-circle-outline</v-icon>
+                    <v-icon class="icon pos_fixed">mdi-close-circle-outline</v-icon>
                 </v-btn>
                 <slot/>
                 <slot name="button">
@@ -44,6 +44,10 @@ export default {
     &-window{
         background:#fff;
         border-radius: 4px;
+        overflow : auto;
+        width: 600px;
+        height: 400px;
+        padding: 30px;
     }
 }
 .modal-enter-active, .modal-leave-active {
