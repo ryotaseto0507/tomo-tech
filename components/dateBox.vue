@@ -4,9 +4,29 @@
             <v-btn icon :id="`btn_${val2}`" @click="openModal">
             {{val1.getDate()}}
             </v-btn>
-            <my-modal @close="closeModal" v-if="modal" :val=val1>
+            <ul>
+                <li v-for="(event,index) in matchedEvents(val1)" class="tag" :key="index">
+                    {{event.detail}}
+                </li>
+            </ul>
+            <my-modal @close="closeModal" v-if="modal">
+                <v-textarea solo label="Details of your event" v-model="eventExplanation"></v-textarea>
+                <v-icon>mdi-calendar-outline</v-icon>
+                <select v-model="num1">
+                    <option v-for="i in 10" >
+                        {{i}}
+                    </option>
+                </select>
+                <span>/</span>
+                <select v-model="num2">
+                    <option v-for="i in 10">
+                        {{i}}
+                    </option>
+                </select>
+                <v-icon>mdi-tag-plus-outline</v-icon>
+                <v-icon>mdi-map-marker-plus</v-icon>
                 <template slot="button">
-                    <button @click="closeModal">Create</button>
+                    <button @click="addNewEvent({id:$store.getters.max,date:val1,detail:eventExplanation,currentNumber:num1,maxNumber:num2})">Create</button>
                 </template>
             </my-modal>
         </div>
@@ -14,15 +34,23 @@
 </template>
 <script >
 import myModal from '~/components/myModal.vue'
-import {mapState} from 'vuex'
+import {mapGetters} from 'vuex'
 export default {
     data(){
         return{
             today: new Date(),
-            modal: false
+            modal: false,
+            num1: 1,
+            num2: 1,
+            eventExplanation: ""
         }
     },
-    computed: mapState(["modal"]),
+    computed: {
+        ...mapGetters({matchedEvents: 'getEvents'}),
+        //matchedEvents: function(){
+        //    return this.$store.getters.getEvents(this.val1)
+       // }
+    },
     props:{
         val1: Date,
         val2: Number
@@ -54,6 +82,10 @@ export default {
         },
         closeModal(){
             this.modal = false
+        },
+        addNewEvent(newEvent){
+            this.closeModal()
+            this.$store.dispatch('addNewEvent',newEvent)
         }
     },
     components:{
@@ -62,6 +94,15 @@ export default {
 }
 </script>
 <style >
+    li{
+        list-style: none
+    }
+    .tag{
+        width: 150px;
+        height: 50px;
+        border-radius: 100px;
+        background-color: red;
+    }
     .dateBox{
         border: 1px solid rgb(0, 0, 0);
         border-radius: 5px;

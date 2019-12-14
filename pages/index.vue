@@ -7,11 +7,15 @@
                 </div>
             </div>
             <div class="backStr">{{month}}</div>
+            <div v-for="(event,index) in getAllEvents" :key="index">
+                {{event.detail}}
+            </div>
         </div>
     </div>
 </template>
 <script>
 import dateBox from '~/components/dateBox.vue'
+import {mapGetters} from 'vuex'
 export default {
     head:{
         title: '出かけよう'
@@ -26,7 +30,10 @@ export default {
     computed: {
         month(){
             return (this.today.getMonth()+1)
-        }
+        },
+        ...mapGetters([
+            'getAllEvents'
+        ])
     },
     components:{
         dateBox

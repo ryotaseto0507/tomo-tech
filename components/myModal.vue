@@ -5,23 +5,9 @@
                 <v-btn icon ripple @click="$emit('close')" >
                     <v-icon>mdi-close-circle-outline</v-icon>
                 </v-btn>
-                <v-textarea solo label="Details of your event" v-model="eventExplanation"></v-textarea>
-                <v-icon>mdi-calendar-outline</v-icon>
-                <select v-model="currentNumber">
-                    <option v-for="i in 10" >
-                        {{i}}
-                    </option>
-                </select>
-                <span>/</span>
-                <select v-model="maxNumber">
-                    <option v-for="i in 10">
-                        {{i}}
-                    </option>
-                </select>
-                <v-icon>mdi-tag-plus-outline</v-icon>
-                <v-icon>mdi-map-marker-plus</v-icon>
+                <slot/>
                 <slot name="button">
-                    <v-btn @click="createEvent(val,eventExplanation,currentNumber,maxNumber)">Create</v-btn>
+                    <button @click="$emit('close')">Close</button>
                 </slot>
             </div>
         </div>
@@ -31,18 +17,11 @@
 export default {
     data(){
         return{
-            currentNumber: 1,
-            maxNumber: 1,
-            eventExplanation: ""
         }
     },
     props:{
-        val: Date
     },
     methods:{
-        createEvent(date,exp,num1,num2){
-            this.$store.dispatch('addNewEvent',{id:this.$store.getters.max,Date:date,eventExplanation:exp,currentNumber:num1,maxNumber:num2})
-        }
 
     }
 
