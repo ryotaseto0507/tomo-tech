@@ -9,7 +9,7 @@
             </div>
             <ul>
                 <li v-for="(event,index) in matchedEvents(formedDate)" :key="index">
-                    <v-btn @click="openEvent(event)"  class="tag" >
+                    <v-btn @click="openEvent(event)" :color="event.activity.color"  class="tag" >
                         {{event.detail}}
                     </v-btn>
                 </li>
@@ -80,12 +80,18 @@ export default {
             time:null,
             num1: 1,
             num2: 1,
+            maxNum1:1,
             eventDetail: "",
             theEvent:Object,
             activities: [{id:1,todo:"Shopping",color:"orange"},{id:2,todo:"Movie",color:"blue"},{id:3,todo:"Food",color:"green"},{id:4,todo:"Sports",color:"purple"}],
             todo:null,
         }
     },
+    //watch: {
+    //    num2: function(newVal,oldVal){
+    //        this.$set(this.maxNum1) = newVal
+    //    }
+    //},
     computed: {
         ...mapGetters({matchedEvents: 'getEventsByDate',
                        getTheEvent: 'getTheEvent',
@@ -133,7 +139,7 @@ export default {
             this.modal = 0
         },
         addNewEvent(newEvent){
-            if(newEvent.detail && newEvent.activity){
+            if(newEvent.detail && newEvent.activity && this.num1 < this.num2){
                 this.closeModal()
                 this.$store.dispatch('addNewEvent',newEvent)
             }else{
