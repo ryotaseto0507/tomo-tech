@@ -8,7 +8,7 @@
             </div>
             <div class="backStr">{{month}}</div>
             <div v-for="(event,index) in getAllEvents" :key="index">
-                {{event.detail}}
+                {{event.id}}
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@ export default {
     data() {
         return{
             numberOfDays: 42,
-            today: new Date(),
+            today: new Date()
         }
     },
     computed: {
@@ -33,7 +33,7 @@ export default {
         },
         ...mapGetters([
             'getAllEvents'
-        ])
+        ]),
     },
     components:{
         dateBox
@@ -45,7 +45,7 @@ export default {
     methods:{
         day(i){
             const date = new Date()
-            date.setDate(this.today.getDate() -7 - this.today.getDay() + i);
+            date.setDate(this.today.getDate() -14 - this.today.getDay() + i)
             return date
         },
     }

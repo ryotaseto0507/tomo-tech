@@ -6,48 +6,37 @@
                     <v-icon class="icon pos_fixed">mdi-close-circle-outline</v-icon>
                 </v-btn>
                 <slot/>
-                <slot name="button">
-                    <button @click="$emit('close')">Close</button>
-                </slot>
             </div>
         </div>
     </transition>
 </template>
 <script>
 export default {
-    data(){
-        return{
-        }
-    },
-    props:{
-    },
-    methods:{
-
-    }
-
+    
 }
 </script>
 <style lang="stylus" scoped>
 .modal {
     &.modal-overlay {
         display: flex;
-        align-items: center;
-        justify-content: center;
         position:fixed;
-        z-index:10;
+        z-index:30;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.3);
+        background: rgba(255,255,255,0);
     }
     &-window{
         background:#fff;
         border-radius: 4px;
         overflow : auto;
-        width: 600px;
-        height: 430px;
-        padding: 30px;
+        position: absolute;
+        top:25%;
+        left:50%;
+        width: 120px;
+        height: 200px;
+        border: 1px solid black
     }
 }
 .modal-enter-active, .modal-leave-active {

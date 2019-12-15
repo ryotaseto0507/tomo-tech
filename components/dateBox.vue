@@ -1,31 +1,35 @@
 <template>
     <div>
         <div :id="`box_${val2}`" class="dateBox">
-            <v-btn icon :id="`btn_${val2}`" @click="openModal">
-            {{val1.getDate()}}
+            <v-btn icon :id="`btn_${val2}`" v-if="val1 > today" @click="openModal">
+                {{val1.getDate()}}
             </v-btn>
+            <div :id="`btn_${val2}`"  v-else >
+                {{val1.getDate()}}
+            </div>
             <ul>
-                <v-btn @click="openEvent(event)" v-for="(event,index) in matchedEvents(val1.getDate())" class="tag" :key="index">
-                    {{event.detail}}
-                </v-btn>
+                <li v-for="(event,index) in matchedEvents(formedDate)" :key="index">
+                    <v-btn @click="openEvent(event)"  class="tag" >
+                        {{event.detail}}
+                    </v-btn>
+                </li>
             </ul>
-           <my-modal @close="closeModal" v-if="modal==2">
-                <v-icon class="icon">mdi-calendar-outline</v-icon>
+           <my-modal @close="closeEvent" v-if="modal==2">
                 <div class="modal-window">
                     <div class="spacing">
-                        <v-icon class="tagicon icon">mdi-tag-text</v-icon><p class="tagicon">tag</p><br>
-                        <v-icon class="time icon">mdi-calendar-outline</v-icon><p class="time">ここに時間を入れる</p><br>
+                        <v-icon class="tagicon icon">mdi-tag-text</v-icon><p class="tagicon">{{theEvent.activity.todo}}</p><br>
+                        <v-icon class="time icon">mdi-calendar-outline</v-icon><p class="time">{{theEvent.time}}</p><br>
                         <v-icon class="map icon">mdi-map-marker-radius</v-icon><p class="map">ここに場所を入れる</p><br>
-                        <v-icon class="text icon">mdi-clipboard-text-outline</v-icon><p class="text">{{eventDetail}}</p><br>
-                        <v-icon class="group icon">mdi-account-group</v-icon><p class="group">ここに人数を入れる</p><br>
+                        <v-icon class="text icon">mdi-clipboard-text-outline</v-icon><p class="text">{{theEvent.detail}}</p><br>
+                        <v-icon class="group icon">mdi-account-group</v-icon><p class="group">{{theEvent.currentNumber}}/{{theEvent.maxNumber}}</p><br>
                         <v-icon class="author icon">mdi-human-greeting</v-icon><p class="author">ここに作者を入れる</p><br>
                     </div>
                 </div>
             </my-modal> 
             <my-modal @close="closeModal" v-if="modal==1">
-                <v-textarea solo label="Details of your event" v-model="eventExplanation"></v-textarea>
+                <v-textarea solo label="Detail of your event" v-model="eventDetail"></v-textarea>
                 <div class="box flex">
-                    <v-icon class="icon span">mdi-calendar-outline</v-icon>
+                    <v-icon class="icon span" @click="openTimeWindow">mdi-calendar-outline</v-icon>
                     <select class="span" v-model="num1">
                         <option v-for="i in 10" >
                             {{i}}
@@ -37,19 +41,28 @@
                             {{i}}
                         </option>
                     </select>
-                    <v-icon class="icon span">mdi-tag-plus-outline</v-icon>
+                    <v-icon class="icon span" @click="openSelectWindow">mdi-tag-plus-outline</v-icon>
                     <v-icon class="icon span">mdi-map-marker-plus</v-icon>
                 </div>
-                    <template slot="button">
-                        <button class="button" style="vertical-align:middle" @click="addNewEvent({id:$store.getters.max,date:val1.getDate(),detail:eventExplanation,currentNumber:num1,maxNumber:num2})">
-                            <span>Create</span>
-                        </button>
-                    </template>
+                <template slot="button">
+                    <button class="button" style="vertical-align:middle" @click="addNewEvent({id:getMax,date:formedDate,detail:eventDetail,currentNumber:num1,maxNumber:num2,activity:todo,time:time})">
+                        <span>Create</span>
+                    </button>
+                </template>
             </my-modal>
+            <my-modal v-if="modal_time" @close="closeTimeWindow">
+                <v-time-picker v-model="time"></v-time-picker>
+            </my-modal>
+            <select-tag @close="closeSelectWindow" v-if="modal_select" >
+                <div class="activity_button"  v-for="(activity,index) in activities" :key="index">
+                    <v-btn :color="activities[index].color"  @click="defineActivity(activity)" >{{activity.todo}}</v-btn>
+                </div>
+            </select-tag>
         </div>
     </div>
 </template>
 <script >
+import selectTag from '~/components/selectTag.vue'
 import myModal from '~/components/myModal.vue'
 import {mapGetters} from 'vuex'
 export default {
@@ -57,16 +70,25 @@ export default {
         return{
             today: new Date(),
             modal: 0,
+            modal_select:false,
+            modal_time:false,
+            time:null,
             num1: 1,
             num2: 1,
-            eventExplanation: "",
-            eventDetail:""
+            eventDetail: "",
+            theEvent:Object,
+            activities: [{id:1,todo:"Shopping",color:"orange"},{id:2,todo:"Movie",color:"blue"},{id:3,todo:"Food",color:"green"},{id:4,todo:"Sports",color:"purple"}],
+            todo:null,
         }
     },
     computed: {
-        ...mapGetters({matchedEvents: 'getEvents',
-                       getTheEvent: 'getTheEvent'},
-                    ),
+        ...mapGetters({matchedEvents: 'getEventsByDate',
+                       getTheEvent: 'getTheEvent',
+                       getMax: 'max'
+                    }),
+        formedDate(){
+            return this.val1.getYear()+"/"+this.val1.getMonth()+"/"+this.val1.getDate()
+        }
     },
     props:{
         val1: Date,
@@ -95,26 +117,59 @@ export default {
     },
     methods:{
         openModal(){
+            this.eventDetail=""
+            this.num1=1
+            this.num2=1
+            this.todo=null
+            this.time=null
             this.modal = 1
         },
         closeModal(){
             this.modal = 0
         },
         addNewEvent(newEvent){
-            this.closeModal()
-            this.$store.dispatch('addNewEvent',newEvent)
+            if(newEvent.detail && newEvent.activity){
+                this.closeModal()
+                this.$store.dispatch('addNewEvent',newEvent)
+            }else{
+                alert('error')
+            }
         },
         openEvent(event){
-            this.eventDetail=this.getTheEvent(event).detail
+            this.theEvent=this.getTheEvent(event)
             this.modal = 2
+        },
+        closeEvent(){
+            this.theEvent=null
+            this.modal =0
+        },
+        openSelectWindow(){
+            this.modal_select=true
+        },
+        closeSelectWindow(){
+            this.modal_select=false
+        },
+        openTimeWindow(){
+            this.modal_time=true
+        },
+        closeTimeWindow(){
+            this.modal_time=false
+        },
+        defineActivity(activity){
+            this.todo = activity
+            this.modal_select=false
         }
     },
     components:{
-        myModal
+        myModal,
+        selectTag
     }
 }
 </script>
 <style >
+    .activity_button{
+        padding:3px;
+    }
     .button {
         display: inline-block;
         border-radius: 8px;
