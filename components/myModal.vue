@@ -2,9 +2,10 @@
     <transition name="modal" appear>
         <div class="modal modal-overlay" @click.self="$emit('close')">
             <div class="modal-window">
-                <v-btn icon ripple @click="$emit('close')" >
-                    <v-icon class="icon pos_fixed">mdi-close-circle-outline</v-icon>
+                <v-btn class="pos_relative" icon ripple @click="$emit('close')" >
+                    <v-icon class="icon pos_fixed2">mdi-close-circle-outline</v-icon>
                 </v-btn>
+                <br>
                 <slot/>
                 <slot name="button">
                     <button @click="$emit('close')">Close</button>
@@ -28,6 +29,18 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.v-icon.v-icon{
+    font-size: 35px;
+    margin-right: 30px;
+}
+.pos_relative{
+    position: relative;
+    left: 520px;
+    top: -5px;
+}
+.pos_fixed2{
+    position:relative
+}
 .modal {
     &.modal-overlay {
         display: flex;
@@ -46,7 +59,7 @@ export default {
         border-radius: 4px;
         overflow : auto;
         width: 600px;
-        height: 430px;
+        height: 400px;
         padding: 30px;
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div :id="`box_${val2}`" class="dateBox">
-            <v-btn icon :id="`btn_${val2}`" v-if="val1 > today" @click="openModal">
+            <v-btn icon :id="`btn_${val2}`" v-if="val1 > today || val1.getDate() == today.getDate()" @click="openModal">
                 {{val1.getDate()}}
             </v-btn>
             <div :id="`btn_${val2}`"  v-else >
@@ -17,19 +17,24 @@
            <my-modal @close="closeEvent" v-if="modal==2">
                 <div class="modal-window">
                     <div class="spacing">
-                        <v-icon class="tagicon icon">mdi-tag-text</v-icon><p class="tagicon">{{theEvent.activity.todo}}</p><br>
-                        <v-icon class="time icon">mdi-calendar-outline</v-icon><p class="time">{{theEvent.time}}</p><br>
-                        <v-icon class="map icon">mdi-map-marker-radius</v-icon><p class="map">ここに場所を入れる</p><br>
-                        <v-icon class="text icon">mdi-clipboard-text-outline</v-icon><p class="text">{{theEvent.detail}}</p><br>
-                        <v-icon class="group icon">mdi-account-group</v-icon><p class="group">{{theEvent.currentNumber}}/{{theEvent.maxNumber}}</p><br>
-                        <v-icon class="author icon">mdi-human-greeting</v-icon><p class="author">ここに作者を入れる</p><br>
+                        <v-icon class="display icon">mdi-tag-text</v-icon><p class="display">{{theEvent.activity.todo}}</p><br>
+                        <v-icon class="display icon">mdi-alarm</v-icon><p class="display">{{theEvent.time}}</p><br>
+                        <v-icon class="display icon">mdi-map-marker-radius</v-icon><p class="display">ここに場所を入れる</p><br>
+                        <v-icon class="display icon">mdi-clipboard-text-outline</v-icon><p class="display">{{theEvent.detail}}</p><br>
+                        <v-icon class="display icon">mdi-account-group</v-icon><p class="display">{{theEvent.currentNumber}}/{{theEvent.maxNumber}}</p><br>
+                        <v-icon class="display icon">mdi-human-greeting</v-icon><p class="display">ここに作者を入れる</p><br>
                     </div>
                 </div>
+                <template slot="button">
+                    <button class="button" style="vertical-align:middle">
+                    <span>Join!</span>
+                    </button>
+                </template>
             </my-modal> 
             <my-modal @close="closeModal" v-if="modal==1">
                 <v-textarea solo label="Detail of your event" v-model="eventDetail"></v-textarea>
                 <div class="box flex">
-                    <v-icon class="icon span" @click="openTimeWindow">mdi-calendar-outline</v-icon>
+                    <v-icon class="icon span" @click="openTimeWindow">mdi-alarm</v-icon>
                     <select class="span" v-model="num1">
                         <option v-for="i in 10" >
                             {{i}}
@@ -46,7 +51,7 @@
                 </div>
                 <template slot="button">
                     <button class="button" style="vertical-align:middle" @click="addNewEvent({id:getMax,date:formedDate,detail:eventDetail,currentNumber:num1,maxNumber:num2,activity:todo,time:time})">
-                        <span>Create</span>
+                        <span>Create!</span>
                     </button>
                 </template>
             </my-modal>
@@ -167,6 +172,13 @@ export default {
 }
 </script>
 <style >
+    .v-icon.v-icon{
+        font-size: 35px;
+        margin-right: 30px;
+    }
+    .display{
+        display: inline;
+    }
     .activity_button{
         padding:3px;
     }
@@ -183,8 +195,9 @@ export default {
         transition: all 0.5s;
         cursor: pointer;
         margin: 5px;
-        position: fixed;
-        right:550px;
+        position: relative;
+        left:380px;
+        top:20px;
     }
     .button span {
         cursor: pointer;
@@ -212,10 +225,6 @@ export default {
         position: fixed;
         right:420px;
         top:180px;
-    }
-    .icon{
-        font-size: 145px;
-        margin-right: 30px;
     }
     /*.span{
         width:90px;
